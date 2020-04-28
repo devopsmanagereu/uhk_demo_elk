@@ -1,0 +1,21 @@
+---
+#- name: Copy metricbeat rpm file to server
+#  copy:
+#    src: /tmp/metricbeat-{{ elk_stack_version }}-x86_64.rpm
+#    dest: /tmp/metricbeat-{{ elk_stack_version }}-x86_64.rpm
+
+#- name: Install metricbeat rpm
+#  command: rpm -i /tmp/metricbeat-{{ elk_stack_version }}-x86_64.rpm
+#  ignore_errors: yes
+
+- name: Install metricbeat
+  yum:
+    name: metricbeat
+    state: present
+
+- name: Create and copy metricbeat.yml
+  template:
+    src: metricbeat.yml
+    dest: /etc/metricbeat/metricbeat.yml
+    backup: true
+  notify: "Restart metricbeat"

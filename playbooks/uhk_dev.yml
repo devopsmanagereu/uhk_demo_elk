@@ -1,0 +1,14 @@
+---
+- hosts: dev
+  become: "{{ ansible_config_become | bool }}"
+  vars:
+    filebeat_docker: true
+  roles:
+    - docker
+    - demo_mysqldb
+    - demo_activemq
+    - demo_password_cracker_control
+    - demo_password_cracker_computation_module
+    - filebeat
+    - metricbeat
+    - packetbeat

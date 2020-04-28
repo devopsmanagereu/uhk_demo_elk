@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  computation_module:
+    container_name: {{ environment_name }}_computation_module
+    image: novst/password-cracker-computation-module
+#    ports:
+#      - "8081:8081"
+    restart: on-failure
+    environment:
+      - AMQPURL=tcp://{{ hostvars[groups['broker_load_balancer'][0]].ansible_host }}:61616
+    labels:
+      - environment_name={{ environment_name }}
+      - application_type=springboot
+    network_mode: host

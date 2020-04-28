@@ -1,0 +1,6 @@
+---
+- name: Docker compose up -d
+  command: /usr/local/bin/docker-compose up -d
+  args:
+    chdir: "{{ elk_stack_host_directory }}"
+  listen: "docker compose up"

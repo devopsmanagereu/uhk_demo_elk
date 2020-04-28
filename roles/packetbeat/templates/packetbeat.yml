@@ -1,0 +1,21 @@
+packetbeat.interfaces.device: any
+packetbeat.interfaces.type: af_packet
+packetbeat.interfaces.buffer_size_mb: 100
+
+packetbeat.protocols:
+  - type: http
+    ports: [80, 8080, 8081, 8161]
+
+  - type: mysql
+    ports: [3306,3307]
+
+  - type: amqp
+    ports: [61616, 5672, 61613, 1883, 61614]
+    hide_connection_information: false
+
+fields:
+  environment: "{{ environment_name }}"
+fields_under_root: true
+
+output.elasticsearch:
+  hosts: [{{ elasticsearch_hosts }}]

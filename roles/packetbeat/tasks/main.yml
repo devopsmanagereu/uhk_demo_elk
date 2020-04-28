@@ -1,0 +1,12 @@
+---
+- name: Install packetbeat
+  yum:
+    name: packetbeat
+    state: present
+
+- name: Create and copy packetbeat.yml
+  template:
+    src: packetbeat.yml
+    dest: /etc/packetbeat/packetbeat.yml
+    backup: true
+  notify: "Restart packetbeat"

@@ -1,0 +1,6 @@
+---
+- hosts: elk
+  become: "{{ ansible_config_become | bool }}"
+  roles:
+    - docker
+    - elk_docker_compose

@@ -1,0 +1,30 @@
+---
+- hosts: docker
+  become: "{{ ansible_config_become | bool }}"
+  vars:
+    filebeat_docker: true
+  roles:
+    - docker
+    - metricbeat
+    - filebeat
+    - packetbeat
+
+- hosts: db
+  become: "{{ ansible_config_become | bool }}"
+  roles:
+    - demo_mysqldb
+
+- hosts: broker
+  become: "{{ ansible_config_become | bool }}"
+  roles:
+    - demo_activemq
+
+- hosts: control
+  become: "{{ ansible_config_become | bool }}"
+  roles:
+    - demo_password_cracker_control
+
+- hosts: computation_module
+  become: "{{ ansible_config_become | bool }}"
+  roles:
+    - demo_password_cracker_computation_module

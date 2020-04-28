@@ -1,0 +1,31 @@
+filebeat.inputs:
+
+{% for item in log_items_list %}
+  - type: log
+    paths:
+      - "{{ item.log_path }}"
+    fields:
+      environment: "{{ environment_name }}"
+      application: "{{ item.application }}"
+      document_type: "{{ item.document_type }}"
+    ignore_older: 72h
+    fields_under_root: true
+    multiline:
+      pattern: '^[0-9]{4}'
+      negate: true
+      match: after
+{% endfor %}
+
+output.logstash:
+  hosts: ["10.2.1.33:5044"]
+
+setup.template.settings:
+  index.number_of_shards: 1
+  index.number_of_replicas: 1
+  index.codec: best_compression
+
+setup.kibana:
+  host: "10.2.1.33:5601"
+
+monitoring:
+  enabled: true

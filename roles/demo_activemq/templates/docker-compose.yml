@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  broker:
+    container_name: {{ environment_name }}_broker
+    image: novst/apache-activemq
+#    ports:
+#      - "8161:8161"
+    restart: on-failure
+    volumes:
+      - ./mysql-connector-java-8.0.19.jar:/apache-activemq-5.15.10/lib/mysql-connector-java-8.0.19.jar
+      - ./log4j.properties:/apache-activemq-5.15.10/conf/log4j.properties
+      - ./activemq.xml:/apache-activemq-5.15.10/conf/activemq.xml
+    labels:
+      - environment_name={{ environment_name }}
+      - application_type=broker
+    network_mode: host

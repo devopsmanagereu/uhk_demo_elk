@@ -1,0 +1,18 @@
+---
+version: '3'
+services:
+{% for item in containers_to_create %}
+  {{ item.container_name }}:
+    image: {{ item.container_image }}:${ELK_VERSION}
+    container_name: {{ item.container_name }}
+    ports: ['{{ item.container_port }}']
+    volumes:
+    {% for volume in item.container_volumes %}
+      - {{ volume }}
+    {% endfor %}
+
+    networks: ['elk_stack_network']
+{% endfor %}
+
+networks: {elk_stack_network: {}}
+

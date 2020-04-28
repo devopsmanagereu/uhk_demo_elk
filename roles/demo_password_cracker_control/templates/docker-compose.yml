@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  control:
+    container_name: {{ environment_name }}_control
+    image: novst/password-cracker-control
+#    ports:
+#      - "8080:8080"
+    restart: on-failure
+    environment:
+      - AMQPURL=tcp://{{ hostvars[groups['broker_load_balancer'][0]].ansible_host }}:61616
+    labels:
+      - environment_name={{ environment_name }}
+      - application_type=springboot
+    network_mode: host

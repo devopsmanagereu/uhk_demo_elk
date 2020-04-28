@@ -1,0 +1,32 @@
+---
+- name: Set vm.max_map_count to 262144 for OS
+  sysctl:
+    name: vm.max_map_count
+    value: '262144'
+    state: present
+
+#- name: Set vm.max_map_count to 262144 into /etc/sysctl.conf
+#  lineinfile:
+#    path: /etc/sysctl.conf
+#    line: vm.max_map_count=262144
+#    state: present
+
+#- name: Install epel-release
+#  yum:
+#    name:
+#      - epel-release
+#
+#- name: Install pip
+#  yum:
+#    name: python-pip
+#    state: present
+#
+#- name: Install docker pip package
+#  pip:
+#    name: docker
+#    state: present
+#
+#- name: Install docker-compose
+#  pip:
+#    name: docker-compose
+#    state: present

@@ -1,0 +1,10 @@
+---
+- name: Copy filebeat rpm file to server
+  copy:
+     src: /tmp/filebeat-{{ elk_stack_version }}-x86_64.rpm
+     dest: /tmp/filebeat-{{ elk_stack_version }}-x86_64.rpm
+
+- name: Install filebeat rpm
+  yum:
+    name: /tmp/filebeat-{{ elk_stack_version }}-x86_64.rpm
+    state: present

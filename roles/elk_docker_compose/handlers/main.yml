@@ -1,0 +1,6 @@
+- name: Restart {{ container_name }} container
+  docker_container:
+    name: "{{ container_name }}"
+    state: started
+    restart: yes
+  listen: "restart container"

@@ -1,0 +1,27 @@
+---
+- name: Download and install the public signing key for ELK repository
+  rpm_key:
+    key: https://packages.elastic.co/GPG-KEY-elasticsearch
+    state: present
+
+- name: Add ELK repository
+  yum_repository:
+    file: curator
+    name: curator-5
+    description: ELK Curator repository
+    baseurl: https://packages.elastic.co/curator/5/centos/7
+    gpgcheck: yes
+    gpgkey: https://packages.elastic.co/GPG-KEY-elasticsearch
+    enabled: yes
+
+- name: Install Curator
+  yum:
+    name: elasticsearch-curator
+    state: present
+
+- name: Add Curator cron
+  cron:
+    name: "ELK Curator cron"
+    minute: "0"
+    hour: "12"
+    job: "/usr/bin/curator --config {{ curator_folder_host }}/curator.yml {{ curator_folder_host }}/actions.yml"

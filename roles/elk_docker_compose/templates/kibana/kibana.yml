@@ -1,0 +1,8 @@
+---
+server.name: kibana
+server.host: "0"
+elasticsearch.hosts: [{{ elasticsearch_url }}]
+
+xpack.monitoring.ui.container.elasticsearch.enabled: true
+
+#logging.dest: /var/log/kibana/kibana.log

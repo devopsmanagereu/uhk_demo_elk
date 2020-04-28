@@ -1,0 +1,6 @@
+---
+- name: Docker compose down
+  command: /usr/local/bin/docker-compose down
+  args:
+    chdir: "{{ elk_stack_host_directory }}"
+  listen: "docker compose down"

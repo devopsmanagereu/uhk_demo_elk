@@ -1,0 +1,26 @@
+---
+- name: Create work dir
+  file:
+    path: /opt/{{ work_dir }}
+    state: directory
+
+- name: Copy templates
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - { src: 'docker-compose.yml', dest: '/opt/{{ work_dir }}/docker-compose.yml' }
+    - { src: 'log4j.properties', dest: '/opt/{{ work_dir }}/log4j.properties'}
+    - { src: 'activemq.xml', dest: '/opt/{{ work_dir }}/activemq.xml'}
+
+- name: Copy files
+  copy:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+  with_items:
+    - { src: 'mysql-connector-java-8.0.19.jar', dest: '/opt/{{ work_dir }}/mysql-connector-java-8.0.19.jar' }
+
+- name: Start docker compose
+  docker_compose:
+    project_src: /opt/{{ work_dir }}
+    state: present

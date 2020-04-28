@@ -1,0 +1,24 @@
+---
+- name: Install filebeat from repository
+  import_tasks: install_online.yml
+  when: install_online|bool
+
+- name: Install filebeat rpm
+  import_tasks: install_offline.yml
+  when: not install_online|bool
+
+- name: Create and copy filebeat.yml
+  template:
+    src: templates/filebeat.yml
+    dest: /etc/filebeat/filebeat.yml
+    backup: true
+  notify: "Restart filebeat"
+  when: not filebeat_docker|bool
+
+- name: Create and copy filebeat.yml for docker
+  template:
+    src: templates/filebeat_docker.yml
+    dest: /etc/filebeat/filebeat.yml
+    backup: true
+  notify: "Restart filebeat"
+  when: filebeat_docker|bool

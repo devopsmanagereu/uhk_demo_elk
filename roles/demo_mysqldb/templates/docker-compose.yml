@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  db:
+    container_name: {{ environment_name }}_db
+    image: mysql
+#    ports:
+#    - "3306:3306"
+    restart: on-failure
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=activemq
+      - MYSQL_USER=activemq
+      - MYSQL_PASSWORD=activemq
+    labels:
+      - environment_name={{ environment_name }}
+      - application_type=db
+    network_mode: host

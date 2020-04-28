@@ -1,0 +1,13 @@
+name: "{{ inventory_hostname }}"
+id: "{{ inventory_hostname }}"
+
+metricbeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+  reload.enabled: false
+
+fields:
+  environment: "{{ environment_name }}"
+fields_under_root: true
+
+output.elasticsearch:
+  hosts: [{{ elasticsearch_hosts }}]

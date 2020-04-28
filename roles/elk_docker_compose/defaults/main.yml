@@ -1,0 +1,124 @@
+---
+elk_stack_version: 7.6.2
+elk_logstash_host: elk
+xmx_size: 3g
+
+elk_stack_network_name: elk_stack
+elk_stack_host_directory: /opt/elk
+
+elasticsearch_container_name: elasticsearch
+elasticsearch_container_image: docker.elastic.co/elasticsearch/elasticsearch
+elasticsearch_container_port: 9200
+elasticsearch_config_folder_container: "/usr/share/elasticsearch/config"
+elasticsearch_config_folder_host: "{{ elk_stack_host_directory }}/{{ elasticsearch_container_name }}/config"
+elasticsearch_logs_folder_container: "/usr/share/elasticsearch/logs"
+elasticsearch_logs_folder_host: "{{ elk_stack_host_directory }}/{{ elasticsearch_container_name }}/logs"
+elasticsearch_data_folder_container: "/usr/share/elasticsearch/data"
+elasticsearch_data_folder_host: "{{ elk_stack_host_directory }}/{{ elasticsearch_container_name }}/data"
+#URL for docker containers
+elasticsearch_url: "http://{{ elasticsearch_container_name }}:{{ elasticsearch_container_port }}"
+#URL for metricbeat
+elasticsearch_url_opde: "http://{{ hostvars['DOCKER_HOST']['ansible_host'] }}:{{ elasticsearch_container_port }}"
+
+kibana_container_name: kibana
+kibana_container_image: docker.elastic.co/kibana/kibana
+kibana_container_port: 5601
+kibana_config_folder_container: "/usr/share/kibana/config"
+kibana_config_folder_host: "{{ elk_stack_host_directory }}/{{ kibana_container_name }}/config"
+kibana_logs_folder_container: "/usr/share/kibana/logs"
+kibana_logs_folder_host: "{{ elk_stack_host_directory }}/{{ kibana_container_name }}/logs"
+kibana_url_opde: "{{ hostvars['DOCKER_HOST']['ansible_host'] }}:{{ kibana_container_port }}"
+
+
+logstash_container_name: logstash
+logstash_container_image: docker.elastic.co/logstash/logstash
+logstash_container_port: 5044
+logstash_config_folder_container: "/usr/share/logstash/config"
+logstash_config_folder_host: "{{ elk_stack_host_directory }}/{{ logstash_container_name }}/config"
+logstash_config_folder_host_pipeline: "{{ elk_stack_host_directory }}/{{ logstash_container_name }}/config/pipeline"
+logstash_logs_folder_container: "/usr/share/logstash/logs"
+logstash_logs_folder_host: "{{ elk_stack_host_directory }}/{{ logstash_container_name }}/logs"
+logstash_url_opde: "{{ hostvars['DOCKER_HOST']['ansible_host'] }}:{{ logstash_container_port }}"
+
+curator_install: false
+curator_folder_host: "{{ elk_stack_host_directory }}/curator"
+
+
+folders_to_create:
+  - "{{ elasticsearch_config_folder_host }}"
+  - "{{ elasticsearch_logs_folder_host }}"
+  - "{{ elasticsearch_data_folder_host }}"
+  - "{{ kibana_config_folder_host }}"
+  - "{{ kibana_logs_folder_host }}"
+  - "{{ logstash_config_folder_host }}"
+  - "{{ logstash_config_folder_host_pipeline }}"
+  - "{{ logstash_logs_folder_host }}"
+  - "{{ curator_folder_host }}"
+template_items_to_deploy:
+  - { src: 'templates/elasticsearch/elasticsearch.yml', dest: '{{ elasticsearch_config_folder_host }}/elasticsearch.yml' }
+  - { src: 'templates/elasticsearch/jvm.options', dest: '{{ elasticsearch_config_folder_host }}/jvm.options' }
+  - { src: 'templates/elasticsearch/log4j2.properties', dest: '{{ elasticsearch_config_folder_host }}/log4j2.properties' }
+  - { src: 'templates/kibana/kibana.yml', dest: '{{ kibana_config_folder_host }}/kibana.yml' }
+  - { src: 'templates/logstash/logstash.yml', dest: '{{ logstash_config_folder_host }}/logstash.yml' }
+  - { src: 'templates/logstash/pipelines.yml', dest: '{{ logstash_config_folder_host }}/pipelines.yml' }
+  - { src: 'templates/logstash/pipeline/devops.conf', dest: '{{ logstash_config_folder_host }}/pipeline/devops.conf' }
+  - { src: 'templates/curator/actions.yml', dest: '{{ curator_folder_host }}/actions.yml' }
+  - { src: 'templates/curator/curator.yml', dest: '{{ curator_folder_host }}/curator.yml' }
+containers_to_create:
+  - {
+    container_name: "{{ elasticsearch_container_name }}",
+    container_image: "{{ elasticsearch_container_image }}",
+    container_image_version: "{{ elk_stack_version }}",
+    container_port: "{{ elasticsearch_container_port }}:{{ elasticsearch_container_port }}",
+    container_volumes: [
+                         "{{ elasticsearch_config_folder_host }}/elasticsearch.yml:{{ elasticsearch_config_folder_container }}/elasticsearch.yml",
+                         "{{ elasticsearch_config_folder_host }}/jvm.options:{{ elasticsearch_config_folder_container }}/jvm.options",
+                         "{{ elasticsearch_config_folder_host }}/log4j2.properties:{{ elasticsearch_config_folder_container }}/log4j2.properties",
+                         "{{ elasticsearch_logs_folder_host }}/:{{ elasticsearch_logs_folder_container }}/",
+                         "{{ elasticsearch_data_folder_host }}/:{{ elasticsearch_data_folder_container }}/" ]
+  }
+  - {
+    container_name: "{{ kibana_container_name }}",
+    container_image: "{{ kibana_container_image }}",
+    container_image_version: "{{ elk_stack_version }}",
+    container_port: "{{ kibana_container_port }}:{{ kibana_container_port }}",
+    container_volumes: [
+                         "{{ kibana_config_folder_host }}/:{{ kibana_config_folder_container }}/",
+                         "{{ kibana_logs_folder_host }}/:{{ kibana_logs_folder_container }}/" ]
+  }
+  - {
+    container_name: "{{ logstash_container_name }}",
+    container_image: "{{ logstash_container_image }}",
+    container_image_version: "{{ elk_stack_version }}",
+    container_port: "{{ logstash_container_port }}:{{ logstash_container_port }}",
+    container_volumes: [
+                         "{{ logstash_config_folder_host }}/:{{ logstash_config_folder_container }}/",
+                         "{{ logstash_logs_folder_host }}/:{{ logstash_logs_folder_container }}/" ]
+  }
+
+#containers_to_create:
+#  elasticsearch:
+#    container_name: "{{ elasticsearch_container_name }}"
+#    container_image: "{{ elasticsearch_container_image }}"
+#    container_image_version: "{{ elk_stack_version }}"
+#    container_port: "{{ elasticsearch_container_port }}:{{ elasticsearch_container_port }}"
+#    container_volumes:
+#      - "{{ elasticsearch_config_folder_host }}/:{{ elasticsearch_config_folder_container }}/"
+#      - "{{ elasticsearch_logs_folder_host }}/:{{ elasticsearch_logs_folder_container }}/"
+#      - "{{ elasticsearch_data_folder_host }}/:{{ elasticsearch_data_folder_container }}/"
+#  kibana:
+#    container_name: "{{ kibana_container_name }}"
+#    container_image: "{{ kibana_container_image }}"
+#    container_image_version: "{{ elk_stack_version }}"
+#    container_port: "{{ kibana_container_port }}:{{ kibana_container_port }}"
+#    container_volumes:
+#      - "{{ kibana_config_folder_host }}/:{{ kibana_config_folder_container }}/"
+#      - "{{ kibana_logs_folder_host }}/:{{ kibana_logs_folder_container }}/"
+#  logstash:
+#    container_name: "{{ logstash_container_name }}"
+#    container_image: "{{ logstash_container_image }}"
+#    container_image_version: "{{ elk_stack_version }}"
+#    container_port: "{{ logstash_container_port }}:{{ logstash_container_port }}"
+#    container_volumes:
+#      - "{{ logstash_config_folder_host }}/:{{ logstash_config_folder_container }}/"
+#      - "{{ logstash_logs_folder_host }}/:{{ logstash_logs_folder_container }}/"

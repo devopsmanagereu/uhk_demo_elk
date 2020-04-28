@@ -1,0 +1,28 @@
+filebeat.inputs:
+- type: container
+  paths:
+    - '/var/lib/docker/containers/*/*.log'
+  fields_under_root: true
+  multiline:
+    pattern: '^[0-9]{4}'
+    negate: true
+    match: after
+  fields:
+    environment: "{{ environment_name }}"
+processors:
+- add_docker_metadata:
+    host: "unix:///var/run/docker.sock"
+
+#libra
+#processors:
+#- dissect:
+#    tokenizer: "%{record_type} %{log_level} %{json_message}"
+#- decode_json_fields:
+#   fields: ["dissect.json_message"]
+
+#output.elasticsearch:
+#  hosts: [{{ elasticsearch_hosts }}]
+#  index: "uhk-%{+yyyy.MM.dd}"
+
+output.logstash:
+  hosts: [{{ logstash_hosts }}]

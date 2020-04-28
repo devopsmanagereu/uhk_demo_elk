@@ -1,0 +1,2 @@
+- pipeline.id: devops-pipeline
+  path.config: "/usr/share/logstash/config/pipeline/devops.conf"
