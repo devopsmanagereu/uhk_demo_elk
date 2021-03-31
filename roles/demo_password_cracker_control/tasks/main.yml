@@ -12,6 +12,6 @@
     - { src: 'docker-compose.yml', dest: '/opt/{{ work_dir }}/docker-compose.yml' }
 
 - name: Start docker compose
-  docker_compose:
-    project_src: /opt/{{ work_dir }}
-    state: present
+  command: /usr/local/bin/docker-compose up -d
+  args:
+    chdir: "/opt/{{ work_dir }}"

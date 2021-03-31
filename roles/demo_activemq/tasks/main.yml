@@ -21,6 +21,6 @@
     - { src: 'mysql-connector-java-8.0.19.jar', dest: '/opt/{{ work_dir }}/mysql-connector-java-8.0.19.jar' }
 
 - name: Start docker compose
-  docker_compose:
-    project_src: /opt/{{ work_dir }}
-    state: present
+  command: /usr/local/bin/docker-compose up -d
+  args:
+    chdir: "/opt/{{ work_dir }}"
